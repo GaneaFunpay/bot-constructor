@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set -o errexit
+set -o nounset
+
+cd ./backend
+
+worker_ready() {
+    celery -A bot_constructor inspect ping
+}
+
+until worker_ready; do
+  >&2 echo 'Celery workers not available'
+  sleep 1
+done
+>&2 echo 'Celery workers is available'
+
+celery -A bot_constructor  \
+    --broker="${CELERY_BROKER}" \
+    flower

@@ -1,0 +1,84 @@
+version: "3.7"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    container_name: backend
+    volumes:
+      - .:/usr/src/app/
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./.env/.local
+    command: /start
+    depends_on:
+      - db
+      - redis
+    restart: always
+
+  db:
+    image: postgres:14-alpine
+    container_name: bot_constructor_db
+    volumes:
+      - database_data:/var/lib/postgresql/data
+    ports:
+      - "8082:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    restart: always
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data:rw
+    container_name: bot_constructor_redis
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: bot_constructor_celery_worker
+    command: /start-celeryworker
+    volumes:
+      - .:/usr/src/app/
+    env_file:
+      - ./.env/.local
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: bot_constructor_celery_beat
+    command: /start-celerybeat
+    volumes:
+      - .:/usr/src/app/
+    env_file:
+      - ./.env/.local
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: bot_constructor_celery_flower
+    command: /start-flower
+    volumes:
+      - .:/usr/src/app/
+    env_file:
+      - ./.env/.local
+    ports:
+      - 5555:5555
+    depends_on:
+      - redis
+      - db
+volumes:
+  database_data: { }
+  redis_data: { }
