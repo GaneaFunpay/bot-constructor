@@ -4,5 +4,5 @@ set -o errexit
 set -o nounset
 
 rm -f './celerybeat.pid'
-cd ./backend
+cd ./server
 celery -A bot_constructor beat -l INFO

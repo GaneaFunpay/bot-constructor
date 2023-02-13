@@ -3,7 +3,7 @@
 set -o errexit
 set -o nounset
 
-cd ./backend
+cd ./server
 
 worker_ready() {
     celery -A bot_constructor inspect ping

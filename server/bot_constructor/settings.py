@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-no#hmr=)7!g=61*q83=ad%-czjetw)ey@dn0tt+6hi&(yu!+=&
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0']
 
 
 # Application definition
@@ -173,4 +173,4 @@ SIMPLE_JWT = {
 }
 
 CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://127.0.0.1:6379/0")
-CELERY_RESULT_BACKEND = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")
+result_backend = os.environ.get("CELERY_BACKEND", "redis://127.0.0.1:6379/0")

@@ -14,7 +14,7 @@ RUN apt-get update \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
-COPY ./backend/requirements.txt /requirements.txt
+COPY ./server/requirements.txt /requirements.txt
 RUN pip install --upgrade pip && pip3 install -r /requirements.txt
 
 COPY ./compose/local/django/entrypoint /entrypoint

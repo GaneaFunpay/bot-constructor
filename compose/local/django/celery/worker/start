@@ -3,5 +3,5 @@
 set -o errexit
 set -o nounset
 
-cd ./backend
-celery -A backend/bot_constructor worker -l INFO
+cd ./server
+celery -A bot_constructor worker -l INFO

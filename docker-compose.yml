@@ -1,10 +1,10 @@
 version: "3.7"
 services:
-  backend:
+  server:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    container_name: backend
+    container_name: server
     volumes:
       - .:/usr/src/app/
     ports:
@@ -63,7 +63,7 @@ services:
       - redis
       - db
 
-  flower:
+  celery_flower:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
