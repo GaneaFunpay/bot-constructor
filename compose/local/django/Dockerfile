@@ -39,4 +39,6 @@ RUN chmod +x /start-flower
 
 WORKDIR /usr/src/app
 
+EXPOSE 8000
+
 ENTRYPOINT ["/entrypoint"]

@@ -7,33 +7,38 @@ services:
     container_name: server
     volumes:
       - .:/usr/src/app/
-    ports:
-      - "8000:8000"
+      - django-static:/server/staticfiles
     env_file:
       - ./.env/.local
     command: /start
     depends_on:
       - db
       - redis
+    networks:
+      - nginx_network
 
   db:
     image: postgres:14-alpine
     container_name: bot_constructor_db
     volumes:
       - database_data:/var/lib/postgresql/data
+      - django-static:/backend/static
     ports:
       - "8082:5432"
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
-    restart: always
+    networks:
+      - nginx_network
 
   redis:
     image: redis:7-alpine
     volumes:
       - redis_data:/data:rw
     container_name: bot_constructor_redis
+    networks:
+      - nginx_network
 
   celery_worker:
     build:
@@ -48,36 +53,78 @@ services:
     depends_on:
       - redis
       - db
+    networks:
+      - nginx_network
 
-  celery_beat:
+#  celery_beat:
+#    build:
+#      context: .
+#      dockerfile: ./compose/local/django/Dockerfile
+#    image: bot_constructor_celery_beat
+#    command: /start-celerybeat
+#    volumes:
+#      - .:/usr/src/app/
+#    env_file:
+#      - ./.env/.local
+#    depends_on:
+#      - redis
+#      - db
+#    networks:
+#      - nginx_network
+#
+#  celery_flower:
+#    build:
+#      context: .
+#      dockerfile: ./compose/local/django/Dockerfile
+#    image: bot_constructor_celery_flower
+#    command: /start-flower
+#    volumes:
+#      - .:/usr/src/app/
+#    env_file:
+#      - ./.env/.local
+#    ports:
+#      - 5555:5555
+#    depends_on:
+#      - redis
+#      - db
+#    networks:
+#      - nginx_network
+
+  frontend:
+    container_name: frontend
     build:
       context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: bot_constructor_celery_beat
-    command: /start-celerybeat
+      dockerfile: ./compose/local/vue/Dockerfile
     volumes:
-      - .:/usr/src/app/
-    env_file:
-      - ./.env/.local
-    depends_on:
-      - redis
-      - db
-
-  celery_flower:
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: bot_constructor_celery_flower
-    command: /start-flower
-    volumes:
-      - .:/usr/src/app/
-    env_file:
-      - ./.env/.local
+      - ./frontend:/app/
+      - /app/node_modules
     ports:
-      - 5555:5555
+      - "8080:8080"
     depends_on:
-      - redis
-      - db
+      - server
+    environment:
+      - NODE_ENV=development
+    networks:
+      - nginx_network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "8000:80"
+    depends_on:
+      - server
+    volumes:
+      - ./nginx/dev.conf:/etc/nginx/nginx.conf
+      - django-static:/usr/src/app/static
+    networks:
+      - nginx_network
+
 volumes:
   database_data: { }
   redis_data: { }
+  django-static:
+
+networks:
+  nginx_network:
+    driver: bridge

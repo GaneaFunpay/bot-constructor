@@ -4,5 +4,8 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
-python server/manage.py migrate
-python server/manage.py runserver 0.0.0.0:8000
+cd server
+
+python manage.py migrate
+python manage.py collectstatic --no-input
+gunicorn -c gunicorn_config.py bot_constructor.wsgi:application --reload
