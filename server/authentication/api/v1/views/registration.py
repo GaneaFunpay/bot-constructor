@@ -5,6 +5,7 @@ from authentication.services.registration import RegistrationService
 
 
 class RegistrationAPIView(GenericAPIView):
+
     serializer_class = RegistrationSerializer
 
     def post(self, request):

@@ -1,10 +1,10 @@
 # dev
 FROM node:16.13.0-alpine3.11 as build-stage
 WORKDIR /app/
-COPY frontend/package.json /app/
+COPY client/package.json /app/
 RUN npm cache verify
 RUN npm install
-COPY frontend /app/
+COPY client /app/
 RUN npm run build
 
 # prod
