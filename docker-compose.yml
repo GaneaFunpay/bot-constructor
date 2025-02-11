@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    container_name: server
+    container_name: bot_constructor_server
     volumes:
       - .:/usr/src/app/
       - django-static:/server/staticfiles
@@ -91,13 +91,12 @@ services:
 #      - nginx_network
 
   client:
-    container_name: client
+    container_name: bot_constructor_client
     build:
       context: .
       dockerfile: ./compose/local/vue/Dockerfile
     volumes:
       - ./client:/app/
-      - /app/node_modules
     ports:
       - "8080:8080"
     depends_on:
@@ -109,7 +108,7 @@ services:
 
   nginx:
     image: nginx:alpine
-    container_name: nginx
+    container_name: bot_constructor_nginx
     ports:
       - "8000:80"
     depends_on:

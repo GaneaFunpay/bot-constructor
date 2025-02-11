@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h1>{{ name }}</h1>
+  <div class="container-signin m-auto w-100 ">
+    <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
     <SignInForm />
   </div>
 </template>
