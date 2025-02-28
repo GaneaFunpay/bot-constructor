@@ -94,7 +94,7 @@ services:
     container_name: bot_constructor_client
     build:
       context: .
-      dockerfile: ./compose/local/vue/Dockerfile
+      dockerfile: ./compose/local/react/Dockerfile
     volumes:
       - ./client:/app/
     ports:
